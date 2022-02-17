@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <style>
+        #map {
+            width: 100%;
+            height: 580px;
+            box-shadow: 5px 5px 5px #888;
+        }
+    </style>
+
+    <script src=" https://unpkg.com/leaflet@1.6.0/dist/leaflet.js "></script>
+    <script type="text/javascript" src="paises2.js"></script>
+    <script type="text/javascript" src="ciudades2.js"></script>
+    <link rel="stylesheet" href=" https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+
+
+</head>
+
+<body onload="myFunction()">
+
+
+    <div id='map'>
+    </div>
+
+    <script>
+        var OSM = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+                + 'contributors',
+            maxZoom: 18
+        });
+        var map = L.map('map', {
+            center: [14.66, -87.72],/* coordenadas defecto*/
+            layers: OSM,
+            zoom: 4,/* zoom po defecto*/
+        });
+
+        function getColor(d) {
+            return d == "South America" ? '#F3FF00' :
+                d == "Europe" ? '#FF9E00' :
+                    d == "Africa" ? '#55FF00' :
+                        d == "North America" ? '#0046FF' :
+                            d == "Asia" ? '#FF0000' :
+                                d == "Oceania" ? '#B600FF' :
+                                    '#000000';
+        };
+
+        function style(feature) {
+            return {
+                fillColor: getColor(feature.properties.continent),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.7
+            };
+        }
+
+        L.geoJson(paises2, {
+            style: style
+        }).addTo(map);
+
+        function colorPuntos(d) {
+            return d == "S" ? '#F2EF5C' :
+                d == "N" ? '#30AB00' :
+                    '#000000';
+        };
+
+        function styleCities(feature) {
+            return {
+                radius: 8,
+                fillColor: colorPuntos(feature.properties.capital),
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            }
+        }
+
+        function styleCitiesN(feature) {
+            return {
+                radius: 5,
+                color: colorPuntos(feature.properties.capital),
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            }
+        }
+
+        L.geoJSON(ciudades2, {
+            pointToLayer: function (feature, latlng) {
+                if (feature.properties.capital == "S") {
+                    return L.circleMarker(latlng, styleCities(feature));
+                }
+                return L.circleMarker(latlng, styleCitiesN(feature));
+            }
+        }).addTo(map);
+
+     
+
+    </script>
+</body>
+
+</html>
